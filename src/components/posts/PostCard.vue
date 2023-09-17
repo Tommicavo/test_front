@@ -25,7 +25,7 @@ export default {
             </h5>
             <p class="card-text">{{ post.description }}</p>
         </div>
-        <div class="cardButtons">
+        <div class="cardButtons d-flex justify-content-center">
           <router-link class="btn btn-primary" :to="{name: 'detailPage', params: {id: post.id}}">Info</router-link>
         </div>
     </div>

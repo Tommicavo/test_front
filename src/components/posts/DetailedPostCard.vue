@@ -14,7 +14,7 @@ export default {
   props: {
     post: Object
   },
-  emits: ['changePage'],
+  emits: ['changePage', 'delete'],
   computed: {},
   methods: {
     formatDates($in_date) {
@@ -46,8 +46,8 @@ export default {
 <template>
   <div class="card detailedPostCard h-100 pb-0">
     <div class="detailButtonsTop d-flex justify-content-between align-items-center">
-      <button type="button" class="btn btn-warning">Edit</button>
-      <button type="button" class="btn btn-danger">Delete</button>
+      <router-link class="btn btn-warning" :to="{name: 'editPage', params: {id: post.id}}">Edit</router-link>
+      <button type="submit" class="btn btn-danger" @click="$emit('delete', post.id)">Delete</button>
     </div>
     <div class="card-body">
       <h5 class="card-title text-center pb-5"> {{ upperTitle(post.title) }} </h5>
@@ -74,6 +74,8 @@ export default {
       <div class="up d-flex justify-content-center align-items-center gap-4">
         <button type="button" class="btn btn-primary" @click="$emit('changePage', post.prevId)">Prev</button>
         <button type="button" class="btn btn-primary" @click="$emit('changePage', post.nextId)">Next</button>
+        <!-- <router-link class="btn btn-primary" :to="{name: 'detailPage', params: {id: post.prevId}}">Broken Prev</router-link>
+        <router-link class="btn btn-primary" :to="{name: 'detailPage', params: {id: post.nextId}}">Broken Next</router-link> -->
       </div>
       <div class="down">
         <router-link class="btn btn-info toUp" :to="{name: 'homePage'}">Home</router-link>

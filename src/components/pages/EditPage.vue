@@ -2,10 +2,10 @@
 
 import axios from 'axios';
 
-const endpoint = 'http://localhost:8000/api/posts/store';
+const baseUri = 'http://localhost:8000/api/posts/';
 
 export default {
-  name: 'CreatePage',
+  name: 'EditPage',
   data() {
     return {
         alertSuccessMessage: null,
@@ -35,17 +35,34 @@ export default {
     }
   },
   methods: {
-    storePost(){
+    fetchPost(endpoint=`${baseUri}${this.$route.params.id}`){
+        this.isLoading = true;
+        
+        axios.get(endpoint)
+        .then(res => {
+            const post = res.data;
+            for (let field in post) this.form[field] = post[field];
+        })
+        .catch(err => {
+            console.error(err);
+            this.$router.push({name: 'notFoundPage'});
+        })
+        .then(() => {
+            this.isLoading = false;
+        })
+    },
+    updatePost(){
         this.alertSuccessMessage = null;
         this.firstCycle = false;
         this.isLoading = true;
         this.errors = {};
 
-        axios.post(endpoint, this.form)
+        const endpoint = `${baseUri}${this.$route.params.id}`;
+
+        axios.put(endpoint, this.form)
         .then(() => {
             const title = this.form.title;
-            this.form = {title: '', description: ''};
-            this.alertSuccessMessage = `"${title}" post successfully stored!`;
+            this.alertSuccessMessage = `"${title}" post successfully updated!`;
         })
         .catch(err => {
             if (err.response.status === 400){
@@ -72,6 +89,9 @@ export default {
         if (this.hasErrors && !this.errors[field]) return 'is-valid';
         if (this.errors[field]) return 'is-invalid';
     }
+  },
+  created(){
+    this.fetchPost();
   }
 }
 </script>
@@ -88,7 +108,7 @@ export default {
             </div>
         </AppAlert>
 
-        <form method="POST" @submit.prevent="storePost">
+        <form method="POST" @submit.prevent="updatePost">
             <!-- title -->
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
@@ -107,8 +127,8 @@ export default {
                 <div v-if="hasErrors && !errors.description" class="valid-feedback"> Looks good </div>
             </div>
 
-            <div class="createButtons d-flex justify-content-between align-items-center">
-                <button type="submit" class="btn btn-primary">Add</button>
+            <div class="editButtons d-flex justify-content-between align-items-center">
+                <button type="submit" class="btn btn-primary">Update</button>
                 <router-link class="btn btn-info" :to="{name: 'homePage'}">Home</router-link>
             </div>
         </form>
@@ -116,12 +136,5 @@ export default {
 </template>
 
 <style lang="scss" scoped>
-label{
-    font-size: 1.5rem;
-    font-weight: 500;
-}
 
-.invalid-feedback, .valid-feedback{
-    padding-left: 12px;
-}
 </style>

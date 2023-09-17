@@ -28,7 +28,6 @@ export default {
         
         axios.get(endpoint)
         .then(res => {
-            // console.log('res.data: ', res.data);
             this.post = res.data;
             console.log('POST: ', this.post);
         })
@@ -43,6 +42,20 @@ export default {
     fetchNewPost(newId){
         const endpoint = `${baseUri}${newId}`;
         this.fetchPost(endpoint);
+    },
+    deletePost(id){
+      this.isLoading = true;
+      const endpoint = `${baseUri}${id}`;
+      axios.delete(endpoint)
+      .then(() => {
+        console.log('Post successfully deleted');
+      })
+      .catch(err => {
+        console.error(err);
+      })
+      .then(() => {
+        this.isLoading = false;
+      })
     }
   },
   created(){
@@ -53,8 +66,8 @@ export default {
 
 <template>
     <AppLoader v-if="isLoading"/>
-    <div v-else class="detailPage">
-        <DetailedPostCard :post="post" @changePage="fetchNewPost"/>
+    <div v-else class="detailPage w-100">
+        <DetailedPostCard :post="post" @changePage="fetchNewPost" @delete="deletePost"/>
     </div>
 </template>
 
