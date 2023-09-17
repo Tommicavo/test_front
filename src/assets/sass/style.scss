@@ -1,0 +1,26 @@
+@use '@/assets/sass/_vars.scss' as *;
+
+#app{
+    max-width: 100vw;
+    text-align: left;
+    padding: 0;
+    margin: 0;
+}
+
+body.myApp{
+    display: block;
+}
+
+.myApp{
+    & main{
+        height: calc(100vh - $headerHeight);
+    }
+    & ul{
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    & a{
+        text-decoration: none;
+    }
+}

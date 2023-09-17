@@ -1,0 +1,93 @@
+<script>
+
+import axios from 'axios';
+
+const baseUri = 'http://localhost:8000/api/posts/';
+
+export default {
+  name: 'DetailedPostCard',
+  data() {
+    return {
+    }
+  },
+  components: {},
+  props: {
+    post: Object
+  },
+  emits: ['changePage'],
+  computed: {},
+  methods: {
+    formatDates($in_date) {
+        const date = new Date($in_date);
+
+        let day = date.getDate();
+        let month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let seconds = date.getSeconds();
+
+        day = day < 10 ? '0' + day : day;
+        month = month < 10 ? '0' + month : month;
+        hours = hours < 10 ? '0' + hours : hours;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+
+        const out_date = `${day}/${month}/${year} at ${hours}:${minutes}`;
+        return out_date;
+    },
+    upperTitle(title){
+      return title.toUpperCase();
+    }
+  }
+}
+</script>
+
+<template>
+  <div class="card detailedPostCard h-100 pb-0">
+    <div class="detailButtonsTop d-flex justify-content-between align-items-center">
+      <button type="button" class="btn btn-warning">Edit</button>
+      <button type="button" class="btn btn-danger">Delete</button>
+    </div>
+    <div class="card-body">
+      <h5 class="card-title text-center pb-5"> {{ upperTitle(post.title) }} </h5>
+      <div class="cardInfo">
+        <div class="description">
+          <div><strong>Description: </strong></div>
+          <div> {{ post.description }} </div>
+        </div>
+        <div class="id">
+          <span><strong>Id: </strong></span>
+          <span> {{ post.id }} </span>
+        </div>
+        <div class="created">
+          <span><strong>Created: </strong></span>
+          <span> {{ formatDates(post.created_at) }} </span>
+        </div>
+        <div class="updated">
+          <span><strong>Last Update: </strong></span>
+          <span> {{ formatDates(post.updated_at) }} </span>
+        </div>
+      </div>
+    </div>
+    <div class="detailButtonsBottom">
+      <div class="up d-flex justify-content-center align-items-center gap-4">
+        <button type="button" class="btn btn-primary" @click="$emit('changePage', post.prevId)">Prev</button>
+        <button type="button" class="btn btn-primary" @click="$emit('changePage', post.nextId)">Next</button>
+      </div>
+      <div class="down">
+        <router-link class="btn btn-info toUp" :to="{name: 'homePage'}">Home</router-link>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+.cardInfo>*{
+  padding: 0.5rem 0;
+}
+
+.toUp{
+  translate: 0 -100%;
+}
+</style>
