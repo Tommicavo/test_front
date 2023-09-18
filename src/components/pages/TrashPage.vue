@@ -112,7 +112,7 @@ export default {
                     <td> {{ post.title }} </td>
                     <td class="d-flex justify-content-center align-items-center gap-3">
                         <button type="submit" class="btn btn-success" @click="restorePost(post.id)">Restore</button>
-                        <button type="button" class="btn btn-primary">Info</button>
+                        <router-link class="btn btn-primary" :to="{name: 'detailPage', params: {id: post.id}}">Info</router-link>
                         <button type="submit" class="btn btn-danger" @click="dropPost(post.id)">Erase</button>
                     </td>
                 </tr>

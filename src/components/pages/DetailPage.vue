@@ -17,11 +17,7 @@ export default {
     DetailedPostCard
   },
   props: {},
-  computed: {
-    getPrevUrl(prev){
-        return `${baseUri}${prev}`
-    }
-  },
+  computed: {},
   methods: {
     async fetchPost(endpoint=`${baseUri}${this.$route.params.id}`){
         this.isLoading = true;
@@ -29,7 +25,7 @@ export default {
         axios.get(endpoint)
         .then(res => {
             this.post = res.data;
-            console.log('POST: ', this.post);
+            console.log('SHOW POST: ', this.post);
         })
         .catch(err => {
             console.error(err);
@@ -69,7 +65,7 @@ export default {
 <template>
     <AppLoader v-if="isLoading"/>
     <div v-else class="detailPage w-100">
-        <DetailedPostCard :post="post" @changePage="fetchNewPost" @delete="deletePost"/>
+        <DetailedPostCard v-if="post" :post="post" @changePage="fetchNewPost" @delete="deletePost"/>
     </div>
 </template>
 

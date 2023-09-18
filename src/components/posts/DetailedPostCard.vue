@@ -44,6 +44,10 @@ export default {
 </script>
 
 <template>
+  <div v-if="post.deleted_at" class="isTrashed alert alert-info py-4">
+    <span><strong>Note: </strong></span>
+    <span>You are browsing trashed projects</span>
+  </div>
   <div class="card detailedPostCard h-100 pb-0">
     <div class="detailButtonsTop d-flex justify-content-between align-items-center">
       <router-link class="btn btn-warning" :to="{name: 'editPage', params: {id: post.id}}">Edit</router-link>
@@ -52,7 +56,7 @@ export default {
     <div class="card-body">
       <h5 class="card-title text-center pb-5"> {{ upperTitle(post.title) }} </h5>
       <div class="cardInfo">
-        <div class="description">
+        <div v-if="post.description" class="description">
           <div><strong>Description: </strong></div>
           <div> {{ post.description }} </div>
         </div>
@@ -68,14 +72,16 @@ export default {
           <span><strong>Last Update: </strong></span>
           <span> {{ formatDates(post.updated_at) }} </span>
         </div>
+        <div v-if="post.deleted_at" class="deleted">
+          <span><strong>Deleted at: </strong></span>
+          <span> {{ formatDates(post.deleted_at) }} </span>
+        </div>
       </div>
     </div>
     <div class="detailButtonsBottom">
       <div class="up d-flex justify-content-center align-items-center gap-4">
         <button type="button" class="btn btn-primary" @click="$emit('changePage', post.prevId)">Prev</button>
         <button type="button" class="btn btn-primary" @click="$emit('changePage', post.nextId)">Next</button>
-        <!-- <router-link class="btn btn-primary" :to="{name: 'detailPage', params: {id: post.prevId}}">Broken Prev</router-link>
-        <router-link class="btn btn-primary" :to="{name: 'detailPage', params: {id: post.nextId}}">Broken Next</router-link> -->
       </div>
       <div class="down">
         <router-link class="btn btn-info toUp" :to="{name: 'homePage'}">Home</router-link>
