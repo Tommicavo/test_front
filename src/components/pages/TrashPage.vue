@@ -9,20 +9,28 @@ export default {
   data() {
     return {
         isLoading: false,
-        post: null
+        posts: null,
+        alert: {
+            message: null,
+            type: ''
+        }
     }
   },
   components: {},
   props: {},
-  computed: {},
+  computed: {
+    isAlertOpen(){
+        return Boolean(this.alert.message);
+    }
+  },
   methods: {
-    fetchDeletedPosts(){
+    async fetchDeletedPosts(){
         this.isLoading = true;
         const endpoint = `${baseUri}trash`;
 
         axios.get(endpoint)
         .then(res => {
-            console.log('deleted posts ->');
+            console.log('fetchDeletedPosts done');
             this.posts = res.data;
         })
         .catch(err => {
@@ -32,15 +40,16 @@ export default {
             this.isLoading = false;
         })
     },
-    async restoreHelper(id){
+    restorePost(id){
         this.isLoading = true;
         const endpoint = `${baseUri}${id}/restore`;
         
         axios.patch(endpoint)
         .then(() => {
-            console.log('Post succesfully restored');
+            this.alert.message = 'Post successfully restored';
+            this.alert.type = 'success';
+            this.fetchDeletedPosts();
             this.$router.push({name: 'trashPage'});
-            
         })
         .catch(err => {
             console.error(err);
@@ -49,9 +58,27 @@ export default {
             this.isLoading = false;
         })
     },
-    async restorePost(id){
-        await this.restoreHelper(id);
-        
+    dropPost(id){
+        this.isLoading = true;
+        const endpoint = `${baseUri}${id}/drop`;
+
+        axios.delete(endpoint)
+        .then(() => {
+            this.alert.message = 'Post successfully erased';
+            this.alert.type = 'danger';
+            this.fetchDeletedPosts();
+            this.$router.push({name: 'trashPage'});
+        })
+        .catch(err => {
+            console.error(err);
+        })
+        .then(() => {
+            this.isLoading = false;
+        })
+    },
+    closeAlert(){
+        this.alert.message = null;
+        this.alert.type = '';
     }
   },
   created(){
@@ -63,7 +90,14 @@ export default {
 <template>
     <AppLoader v-if="isLoading"/>
     <div v-else class="trashPage w-100">
-        <h1 class="py-3">Trash Can</h1>
+        <AppAlert :isOpen="isAlertOpen" :type="alert.type" :isDismissible="true" @close="closeAlert">
+            <div v-if="alert.message"> {{ alert.message }} </div>
+        </AppAlert>
+
+        <header class="d-flex justify-content-between align-items-center">
+            <h1 class="py-3">Trash Can</h1>
+            <router-link class="btn btn-primary" :to="{name: 'homePage'}">Home</router-link>
+        </header>
         <table class="table">
             <thead>
                 <tr>
@@ -79,7 +113,7 @@ export default {
                     <td class="d-flex justify-content-center align-items-center gap-3">
                         <button type="submit" class="btn btn-success" @click="restorePost(post.id)">Restore</button>
                         <button type="button" class="btn btn-primary">Info</button>
-                        <button type="button" class="btn btn-danger">Erase</button>
+                        <button type="submit" class="btn btn-danger" @click="dropPost(post.id)">Erase</button>
                     </td>
                 </tr>
             </tbody>

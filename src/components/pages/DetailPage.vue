@@ -50,6 +50,7 @@ export default {
       axios.delete(endpoint)
       .then(() => {
         console.log('Post successfully deleted');
+        this.$router.push({name: 'homePage'});
       })
       .catch(err => {
         console.error(err);
