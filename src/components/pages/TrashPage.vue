@@ -9,7 +9,7 @@ export default {
   data() {
     return {
         isLoading: false,
-        posts: null
+        post: null
     }
   },
   components: {},
@@ -22,6 +22,7 @@ export default {
 
         axios.get(endpoint)
         .then(res => {
+            console.log('deleted posts ->');
             this.posts = res.data;
         })
         .catch(err => {
@@ -31,13 +32,27 @@ export default {
             this.isLoading = false;
         })
     },
-    restorePost(){
+    async restoreHelper(id){
         this.isLoading = true;
-        const endpoint = `${baseUri}`;
+        const endpoint = `${baseUri}${id}/restore`;
         
-        axios.patch()
+        axios.patch(endpoint)
+        .then(() => {
+            console.log('Post succesfully restored');
+            this.$router.push({name: 'trashPage'});
+            
+        })
+        .catch(err => {
+            console.error(err);
+        })
+        .then(() => {
+            this.isLoading = false;
+        })
     },
-    dropPost(){}
+    async restorePost(id){
+        await this.restoreHelper(id);
+        
+    }
   },
   created(){
     this.fetchDeletedPosts();
@@ -62,7 +77,7 @@ export default {
                     <td> {{ post.id }} </td>
                     <td> {{ post.title }} </td>
                     <td class="d-flex justify-content-center align-items-center gap-3">
-                        <button type="button" class="btn btn-success">Restore</button>
+                        <button type="submit" class="btn btn-success" @click="restorePost(post.id)">Restore</button>
                         <button type="button" class="btn btn-primary">Info</button>
                         <button type="button" class="btn btn-danger">Erase</button>
                     </td>

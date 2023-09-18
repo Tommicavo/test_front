@@ -23,7 +23,7 @@ export default {
     }
   },
   methods: {
-    fetchPost(endpoint=`${baseUri}${this.$route.params.id}`){
+    async fetchPost(endpoint=`${baseUri}${this.$route.params.id}`){
         this.isLoading = true;
         
         axios.get(endpoint)
@@ -39,9 +39,9 @@ export default {
             this.isLoading = false;
         })
     },
-    fetchNewPost(newId){
+    async fetchNewPost(newId){
         const endpoint = `${baseUri}${newId}`;
-        this.fetchPost(endpoint);
+        await this.fetchPost(endpoint);
         this.$router.push({name: 'detailPage', params: {id: newId}});
     },
     deletePost(id){
