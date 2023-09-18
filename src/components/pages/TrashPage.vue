@@ -2,6 +2,8 @@
 
 import axios from 'axios';
 
+import AppModal from '@/components/generics/AppModal.vue';
+
 const baseUri = 'http://localhost:8000/api/posts/';
 
 export default {
@@ -16,7 +18,9 @@ export default {
         }
     }
   },
-  components: {},
+  components: {
+    AppModal
+  },
   props: {},
   computed: {
     isAlertOpen(){
@@ -79,6 +83,25 @@ export default {
     closeAlert(){
         this.alert.message = null;
         this.alert.type = '';
+    },
+    initDrop(id){
+        const modalMessage = document.getElementById('modalMessage');
+        const confirmEraseBtn = document.getElementById('confirmEraseBtn');
+        const btnsErase = document.querySelectorAll('.btnsErase');
+        const myModal = document.getElementById('myModal');
+        const modalBackdrop = document.querySelector('.modal-backdrop');
+
+        btnsErase.forEach(btnErase => {
+            let question;
+
+            if (btnErase.classList.contains('erasePost')) question = 'Do you really want to drop this post?\nThis action will be irreverible!';
+
+            modalMessage.innerText = question;
+        });
+
+        confirmEraseBtn.addEventListener('click', () => {
+            this.dropPost(id);
+        });
     }
   },
   created(){
@@ -88,6 +111,7 @@ export default {
 </script>
 
 <template>
+    <AppModal/>
     <AppLoader v-if="isLoading"/>
     <div v-else class="trashPage w-100">
         <AppAlert :isOpen="isAlertOpen" :type="alert.type" :isDismissible="true" @close="closeAlert">
@@ -113,7 +137,7 @@ export default {
                     <td class="d-flex justify-content-center align-items-center gap-3">
                         <button type="submit" class="btn btn-success" @click="restorePost(post.id)">Restore</button>
                         <router-link class="btn btn-primary" :to="{name: 'detailPage', params: {id: post.id}}">Info</router-link>
-                        <button type="submit" class="btn btn-danger" @click="dropPost(post.id)">Erase</button>
+                        <button type="submit" class="btn btn-danger btnsErase erasePost" data-bs-toggle="modal" data-bs-target="#myModal" @click="initDrop(post.id)">Erase</button>
                     </td>
                 </tr>
             </tbody>
