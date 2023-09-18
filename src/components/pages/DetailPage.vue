@@ -42,6 +42,7 @@ export default {
     fetchNewPost(newId){
         const endpoint = `${baseUri}${newId}`;
         this.fetchPost(endpoint);
+        this.$router.push({name: 'detailPage', params: {id: newId}});
     },
     deletePost(id){
       this.isLoading = true;

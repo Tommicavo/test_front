@@ -46,7 +46,10 @@ export default {
   <div v-else class="homePage">
     <header class="d-flex justify-content-between align-items-center py-3">
       <h2>Posts</h2>
-      <router-link class="btn btn-success" :to="{name: 'createPage'}">Add Post</router-link>
+      <div>
+        <router-link class="btn btn-success mx-2" :to="{name: 'createPage'}">Add Post</router-link>
+        <router-link class="btn btn-danger mx-2" :to="{name: 'trashPage'}">Open Trash Can</router-link>
+      </div>
     </header>
 
     <AppPagination :links="posts.links" @changePage="fetchPosts"/>
