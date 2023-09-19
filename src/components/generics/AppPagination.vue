@@ -11,7 +11,7 @@ export default {
   },
   computed: {},
   methods: {},
-  emits: ['changePage']
+  emits: ['page']
 }
 </script>
 
@@ -23,7 +23,7 @@ export default {
                 :class="[{active : link.active}, {disabled : !link.url}]">
                 <button type="button" class="page-link"
                 v-html="link.label" :disabled="!link.url"
-                @click="$emit('changePage', link.url)"></button>
+                @click="$emit('page', link.label)"></button>
                 </li>
             </ul>
         </nav>
