@@ -11,6 +11,7 @@ export default {
     return {
         isLoading: false,
         alertMessage: '',
+        alertType: 'info',
         post: null
     }
   },
@@ -31,7 +32,6 @@ export default {
       axios.get(endpoint)
       .then(res => {
           this.post = res.data;
-          if (this.$route.query.updated == 'true') this.alertMessage = 'Post successfully updated!';
           console.log('SHOW POST: ', this.post);
       })
       .catch(err => {
@@ -64,9 +64,17 @@ export default {
     },
     closeAlert(){
       this.alertMessage = '';
+    },
+    checkRoute(){
+      if (this.$route.query.updated == 'true')
+      {
+        this.alertMessage = 'Post successfully updated!';
+        this.alertType = 'success';
+      }
     }
   },
   created(){
+    this.checkRoute();
     this.fetchPost();
   }
 }
@@ -75,7 +83,7 @@ export default {
 <template>
     <AppLoader v-if="isLoading"/>
     <div v-else class="detailPage w-100">
-      <AppAlert :isOpen="isAlertOpen" type="success" :isDismissible="true" @close="closeAlert">
+      <AppAlert :isOpen="isAlertOpen" :type="alertType" :isDismissible="true" @close="closeAlert">
         <div> {{ alertMessage }} </div>
       </AppAlert>
       <DetailedPostCard v-if="post" :post="post" @changePage="fetchNewPost" @delete="deletePost"/>

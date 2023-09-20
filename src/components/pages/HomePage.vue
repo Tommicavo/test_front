@@ -47,7 +47,16 @@ export default {
       .then(res => {
         this.posts.data = res.data.data;
         this.posts.links = res.data.links;
-        if (this.$route.query.stored == 'true')
+      })
+      .catch(err => {
+        console.error(err);
+      })
+      .then(() => {
+        this.isLoading = false;
+      })
+    },
+    checkRoute(){
+      if (this.$route.query.stored == 'true')
         {
           this.alertMessage = 'Post successfully stored!';
           this.alertType = 'success';
@@ -57,19 +66,13 @@ export default {
           this.alertMessage = 'Post successfully moved into Trash';
           this.alertType = 'danger';
         }
-      })
-      .catch(err => {
-        console.error(err);
-      })
-      .then(() => {
-        this.isLoading = false;
-      })
     },
     closeAlert(){
       this.alertMessage = '';
     }
   },
   created(){
+    this.checkRoute();
     this.fetchPosts();
   }
 }
