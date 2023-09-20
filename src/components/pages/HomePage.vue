@@ -13,6 +13,8 @@ export default {
       isLoading: false,
       filterWord: '',
       currentPage: 1,
+      alertMessage: '',
+      alertType: 'info',
       posts: {
         data: [],
         links: []
@@ -26,6 +28,9 @@ export default {
   computed: {
     currentEndpoint(){
       return `${baseUri}?page=${this.currentPage}&filter=${this.filterWord}`;
+    },
+    isAlertOpen(){
+      return Boolean(this.alertMessage);
     }
   },
   methods: {
@@ -42,6 +47,16 @@ export default {
       .then(res => {
         this.posts.data = res.data.data;
         this.posts.links = res.data.links;
+        if (this.$route.query.stored == 'true')
+        {
+          this.alertMessage = 'Post successfully stored!';
+          this.alertType = 'success';
+        }
+        else if (this.$route.query.deleted == 'true')
+        {
+          this.alertMessage = 'Post successfully moved into Trash';
+          this.alertType = 'danger';
+        }
       })
       .catch(err => {
         console.error(err);
@@ -49,6 +64,9 @@ export default {
       .then(() => {
         this.isLoading = false;
       })
+    },
+    closeAlert(){
+      this.alertMessage = '';
     }
   },
   created(){
@@ -77,6 +95,9 @@ export default {
     </header>
 
     <AppPagination :links="posts.links" @page="getPageLabel"/>
+    <AppAlert :isOpen="isAlertOpen" :type="alertType" :isDismissible="true" @close="closeAlert">
+      <div> {{ alertMessage }} </div>
+    </AppAlert>
     <AppMain :posts="posts.data"/>
   </div>
 </template>

@@ -63,7 +63,7 @@ export default {
         .then(() => {
             const title = this.form.title;
             this.alertSuccessMessage = `"${title}" post successfully updated!`;
-            // this.$router.push({name: 'detailPage', params: {id: this.$route.params.id}});
+            this.$router.push({name: 'detailPage', params: {id: this.$route.params.id}, query: {updated: true}});
         })
         .catch(err => {
             if (err.response.status === 400){

@@ -46,6 +46,7 @@ export default {
             const title = this.form.title;
             this.form = {title: '', description: ''};
             this.alertSuccessMessage = `"${title}" post successfully stored!`;
+            this.$router.push({name: 'homePage', query: {stored: true}});
         })
         .catch(err => {
             if (err.response.status === 400){

@@ -10,6 +10,7 @@ export default {
   data() {
     return {
         isLoading: false,
+        alertMessage: '',
         post: null
     }
   },
@@ -17,23 +18,29 @@ export default {
     DetailedPostCard
   },
   props: {},
-  computed: {},
+  computed: {
+    isAlertOpen(){
+      return Boolean(this.alertMessage);
+    }
+  },
   methods: {
     async fetchPost(endpoint=`${baseUri}${this.$route.params.id}`){
-        this.isLoading = true;
-        
-        axios.get(endpoint)
-        .then(res => {
-            this.post = res.data;
-            console.log('SHOW POST: ', this.post);
-        })
-        .catch(err => {
-            console.error(err);
-            this.$router.push({name: 'notFoundPage'});
-        })
-        .then(() => {
-            this.isLoading = false;
-        })
+      console.log(this.$route);
+      this.isLoading = true;
+      
+      axios.get(endpoint)
+      .then(res => {
+          this.post = res.data;
+          if (this.$route.query.updated == 'true') this.alertMessage = 'Post successfully updated!';
+          console.log('SHOW POST: ', this.post);
+      })
+      .catch(err => {
+          console.error(err);
+          this.$router.push({name: 'notFoundPage'});
+      })
+      .then(() => {
+          this.isLoading = false;
+      })
     },
     async fetchNewPost(newId){
         const endpoint = `${baseUri}${newId}`;
@@ -46,7 +53,7 @@ export default {
       axios.delete(endpoint)
       .then(() => {
         console.log('Post successfully deleted');
-        this.$router.push({name: 'homePage'});
+        this.$router.push({name: 'homePage', query: {deleted: true}});
       })
       .catch(err => {
         console.error(err);
@@ -54,6 +61,9 @@ export default {
       .then(() => {
         this.isLoading = false;
       })
+    },
+    closeAlert(){
+      this.alertMessage = '';
     }
   },
   created(){
@@ -65,7 +75,10 @@ export default {
 <template>
     <AppLoader v-if="isLoading"/>
     <div v-else class="detailPage w-100">
-        <DetailedPostCard v-if="post" :post="post" @changePage="fetchNewPost" @delete="deletePost"/>
+      <AppAlert :isOpen="isAlertOpen" type="success" :isDismissible="true" @close="closeAlert">
+        <div> {{ alertMessage }} </div>
+      </AppAlert>
+      <DetailedPostCard v-if="post" :post="post" @changePage="fetchNewPost" @delete="deletePost"/>
     </div>
 </template>
 
